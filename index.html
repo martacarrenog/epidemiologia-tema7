@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tema 7 – Estudios Observacionales</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #f5f4f0; color: #1a1a1a; line-height: 1.6; }
+
+  /* NAV */
+  nav { background: #1d3557; color: white; padding: 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+  .nav-inner { max-width: 1100px; margin: auto; display: flex; align-items: center; gap: 0; }
+  .nav-brand { padding: 14px 24px; font-size: 15px; font-weight: 600; border-right: 1px solid rgba(255,255,255,0.15); white-space: nowrap; }
+  .nav-links { display: flex; overflow-x: auto; }
+  .nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; padding: 14px 16px; font-size: 13px; white-space: nowrap; transition: background 0.15s, color 0.15s; border-bottom: 3px solid transparent; }
+  .nav-links a:hover, .nav-links a.active { color: white; background: rgba(255,255,255,0.1); border-bottom-color: #a8dadc; }
+
+  /* LAYOUT */
+  .container { max-width: 1100px; margin: auto; padding: 32px 20px; }
+  section { display: none; }
+  section.active { display: block; }
+
+  /* CARDS */
+  .card { background: white; border-radius: 12px; border: 0.5px solid #ddd; padding: 24px; margin-bottom: 20px; }
+  .card h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; color: #1d3557; }
+  .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #2c3e50; }
+  .card p { font-size: 15px; color: #333; margin-bottom: 10px; }
+
+  /* BADGES */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-orange { background: #ffedd5; color: #9a3412; }
+  .badge-purple { background: #ede9fe; color: #5b21b6; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+
+  /* TABLE */
+  .study-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .study-table th { background: #1d3557; color: white; padding: 10px 14px; text-align: left; font-weight: 500; }
+  .study-table td { padding: 10px 14px; border-bottom: 0.5px solid #e5e7eb; vertical-align: top; }
+  .study-table tr:nth-child(even) td { background: #f9fafb; }
+  .study-table tr:hover td { background: #eff6ff; }
+
+  /* FORMULAS */
+  .formula-box { background: #f0f4ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 14px 0; font-family: 'Georgia', serif; font-size: 15px; color: #1e3a8a; }
+  .formula-box strong { display: block; font-size: 13px; font-family: system-ui; color: #6b7280; margin-bottom: 6px; font-weight: 500; }
+  .formula-result { background: #fefce8; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 10px 0; font-size: 14px; color: #78350f; }
+
+  /* 2x2 TABLE */
+  .two-by-two { border-collapse: collapse; margin: 16px auto; }
+  .two-by-two th, .two-by-two td { border: 2px solid #94a3b8; padding: 10px 18px; text-align: center; font-size: 14px; }
+  .two-by-two th { background: #1d3557; color: white; }
+  .two-by-two .cell-a { background: #dbeafe; font-weight: 700; font-size: 18px; color: #1e40af; }
+  .two-by-two .cell-b { background: #e0f2fe; font-weight: 700; font-size: 18px; color: #0369a1; }
+  .two-by-two .cell-c { background: #dcfce7; font-weight: 700; font-size: 18px; color: #166534; }
+  .two-by-two .cell-d { background: #f0fdf4; font-weight: 700; font-size: 18px; color: #15803d; }
+
+  /* PROS/CONS */
+  .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+  .pros { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 14px; }
+  .cons { background: #fff1f2; border: 1px solid #fda4af; border-radius: 8px; padding: 14px; }
+  .pros h4 { color: #166534; font-size: 14px; margin-bottom: 8px; }
+  .cons h4 { color: #9f1239; font-size: 14px; margin-bottom: 8px; }
+  .pros li, .cons li { font-size: 13px; margin-left: 16px; margin-bottom: 4px; }
+
+  /* TIMELINE */
+  .timeline { display: flex; align-items: center; gap: 0; margin: 20px 0; }
+  .tl-box { background: #1d3557; color: white; padding: 10px 16px; border-radius: 8px; font-size: 13px; text-align: center; flex: 1; }
+  .tl-arrow { font-size: 22px; color: #94a3b8; padding: 0 6px; }
+  .tl-box.exposed { background: #2563eb; }
+  .tl-box.outcome { background: #16a34a; }
+  .tl-box.past { background: #7c3aed; }
+
+  /* CALCULATOR */
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .calc-input-group { display: flex; flex-direction: column; gap: 6px; }
+  .calc-input-group label { font-size: 13px; font-weight: 500; color: #374151; }
+  .calc-input-group input { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 15px; width: 100%; }
+  .calc-input-group input:focus { outline: 2px solid #3b82f6; border-color: transparent; }
+  .calc-btn { background: #1d3557; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+  .calc-btn:hover { background: #2563eb; }
+  .calc-results { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-top: 12px; }
+  .result-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 0.5px solid #e2e8f0; font-size: 14px; }
+  .result-row:last-child { border-bottom: none; }
+  .result-value { font-weight: 600; font-size: 16px; color: #1d3557; }
+  .interp { background: #eff6ff; border-radius: 8px; padding: 12px; margin-top: 12px; font-size: 13px; color: #1e40af; }
+
+  /* QUIZ */
+  .quiz-question { margin-bottom: 24px; }
+  .quiz-question p { font-size: 15px; font-weight: 500; margin-bottom: 12px; color: #1d3557; }
+  .quiz-option { display: block; padding: 10px 14px; border: 1.5px solid #d1d5db; border-radius: 8px; margin-bottom: 8px; cursor: pointer; font-size: 14px; transition: all 0.15s; background: white; }
+  .quiz-option:hover { border-color: #3b82f6; background: #eff6ff; }
+  .quiz-option.correct { border-color: #16a34a; background: #f0fdf4; color: #166534; }
+  .quiz-option.incorrect { border-color: #dc2626; background: #fff1f2; color: #9f1239; }
+  .quiz-option.revealed { cursor: default; }
+  .quiz-feedback { font-size: 13px; margin-top: 6px; padding: 8px 12px; border-radius: 6px; }
+  .quiz-feedback.ok { background: #f0fdf4; color: #166534; }
+  .quiz-feedback.fail { background: #fff1f2; color: #9f1239; }
+  .quiz-score { text-align: center; padding: 24px; background: #f0f4ff; border-radius: 12px; font-size: 22px; font-weight: 600; color: #1d3557; margin-top: 16px; display: none; }
+
+  /* FILL IN THE BLANK */
+  .fitb-input { border: none; border-bottom: 2px solid #3b82f6; background: transparent; font-size: 15px; padding: 2px 6px; width: 90px; text-align: center; color: #1d3557; font-weight: 600; }
+  .fitb-input:focus { outline: none; border-bottom-color: #7c3aed; }
+  .fitb-input.correct { border-bottom-color: #16a34a; color: #16a34a; }
+  .fitb-input.wrong { border-bottom-color: #dc2626; color: #dc2626; }
+  .fitb-sentence { font-size: 15px; line-height: 2.2; margin-bottom: 10px; }
+
+  /* RESOURCES */
+  .resource-card { display: flex; align-items: center; gap: 16px; background: white; border: 0.5px solid #ddd; border-radius: 10px; padding: 16px; margin-bottom: 12px; text-decoration: none; color: inherit; transition: box-shadow 0.15s, border-color 0.15s; }
+  .resource-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: #93c5fd; }
+  .resource-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .resource-card h4 { font-size: 15px; font-weight: 600; color: #1d3557; margin-bottom: 2px; }
+  .resource-card p { font-size: 13px; color: #6b7280; }
+  .resource-card .tag { font-size: 11px; margin-top: 4px; }
+
+  /* OR interpretation */
+  .or-scale { display: flex; align-items: center; gap: 0; margin: 16px 0; border-radius: 8px; overflow: hidden; font-size: 12px; font-weight: 500; }
+  .or-seg { flex: 1; padding: 8px 4px; text-align: center; }
+  .or-seg.protect { background: #dcfce7; color: #166534; }
+  .or-seg.neutral { background: #f1f5f9; color: #475569; }
+  .or-seg.risk { background: #fee2e2; color: #991b1b; }
+
+  @media (max-width: 600px) {
+    .calc-grid { grid-template-columns: 1fr; }
+    .pros-cons { grid-template-columns: 1fr; }
+    .timeline { flex-direction: column; gap: 4px; }
+    .tl-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">📊 Tema 7</div>
+    <div class="nav-links">
+      <a href="#" class="active" onclick="showSection('intro',this)">Introducción</a>
+      <a href="#" onclick="showSection('transversal',this)">Transversales</a>
+      <a href="#" onclick="showSection('cohortes',this)">Cohortes</a>
+      <a href="#" onclick="showSection('casos',this)">Casos y Controles</a>
+      <a href="#" onclick="showSection('resumen',this)">Resumen</a>
+      <a href="#" onclick="showSection('calculadora',this)">🔢 Calculadora</a>
+      <a href="#" onclick="showSection('quiz',this)">🧠 Quiz</a>
+      <a href="#" onclick="showSection('recursos',this)">🔗 Recursos</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== INTRO ===================== -->
+<section id="intro" class="active">
+<div class="container">
+  <div class="card">
+    <h2>Estudios analíticos observacionales</h2>
+    <p>Los estudios analíticos observacionales buscan establecer la <strong>relación entre un factor de riesgo y una enfermedad</strong>, sin intervenir en la asignación de la exposición. Hay tres tipos principales:</p>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap:16px; margin-top:20px;">
+      <div style="background:#eff6ff; border-radius:10px; padding:18px; border:1px solid #bfdbfe; cursor:pointer;" onclick="showSection('transversal', document.querySelectorAll('.nav-links a')[1])">
+        <div style="font-size:28px; margin-bottom:8px;">📷</div>
+        <h3>1. Transversales</h3>
+        <p style="font-size:13px; color:#374151; margin-top:6px;">Fotografía en un momento puntual. Miden <strong>prevalencia</strong>.</p>
+        <div style="margin-top:10px;"><span class="badge badge-blue">Sin temporalidad</span></div>
+      </div>
+      <div style="background:#f0fdf4; border-radius:10px; padding:18px; border:1px solid #86efac; cursor:pointer;" onclick="showSection('cohortes', document.querySelectorAll('.nav-links a')[2])">
+        <div style="font-size:28px; margin-bottom:8px;">🎬</div>
+        <h3>2. Cohortes</h3>
+        <p style="font-size:13px; color:#374151; margin-top:6px;">Seguimiento hacia el futuro. Miden <strong>incidencia</strong>.</p>
+        <div style="margin-top:10px;"><span class="badge badge-green">Prospectivo</span></div>
+      </div>
+      <div style="background:#fdf4ff; border-radius:10px; padding:18px; border:1px solid #d8b4fe; cursor:pointer;" onclick="showSection('casos', document.querySelectorAll('.nav-links a')[3])">
+        <div style="font-size:28px; margin-bottom:8px;">🔍</div>
+        <h3>3. Casos y Controles</h3>
+        <p style="font-size:13px; color:#374151; margin-top:6px;">Parte de enfermos/sanos y mira al pasado. <strong>Odds Ratio</strong>.</p>
+        <div style="margin-top:10px;"><span class="badge badge-purple">Retrospectivo</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>La tabla 2×2</h2>
+    <p>Es la herramienta fundamental para organizar los datos en todos los estudios observacionales:</p>
+    <div style="overflow-x:auto; margin-top:16px; text-align:center;">
+      <table class="two-by-two">
+        <tr>
+          <th></th>
+          <th>Enfermos</th>
+          <th>No enfermos</th>
+        </tr>
+        <tr>
+          <th>Expuestos</th>
+          <td class="cell-a">a</td>
+          <td class="cell-b">b</td>
+        </tr>
+        <tr>
+          <th>No expuestos</th>
+          <td class="cell-c">c</td>
+          <td class="cell-d">d</td>
+        </tr>
+      </table>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:16px;">
+      <div style="text-align:center;padding:12px;background:#dbeafe;border-radius:8px;"><span style="font-size:22px;font-weight:700;color:#1e40af;">a</span><br><span style="font-size:12px;color:#1e40af;">Expuestos + Enfermos</span></div>
+      <div style="text-align:center;padding:12px;background:#e0f2fe;border-radius:8px;"><span style="font-size:22px;font-weight:700;color:#0369a1;">b</span><br><span style="font-size:12px;color:#0369a1;">Expuestos + Sanos</span></div>
+      <div style="text-align:center;padding:12px;background:#dcfce7;border-radius:8px;"><span style="font-size:22px;font-weight:700;color:#166534;">c</span><br><span style="font-size:12px;color:#166534;">No expuestos + Enfermos</span></div>
+      <div style="text-align:center;padding:12px;background:#f0fdf4;border-radius:8px;"><span style="font-size:22px;font-weight:700;color:#15803d;">d</span><br><span style="font-size:12px;color:#15803d;">No expuestos + Sanos</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===================== TRANSVERSAL ===================== -->
+<section id="transversal">
+<div class="container">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <span style="font-size:36px;">📷</span>
+      <div><span class="badge badge-blue">Estudio tipo 1</span><h2 style="margin:4px 0 0;">Estudios Transversales</h2></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-box" style="background:#6b7280;">Población</div>
+      <div class="tl-arrow">→</div>
+      <div class="tl-box" style="background:#2563eb;">Medición simultánea<br>Exposición + Enfermedad</div>
+      <div class="tl-arrow">→</div>
+      <div class="tl-box" style="background:#0f766e;">Prevalencia</div>
+    </div>
+    <p>Se registra <strong>al mismo tiempo</strong> el estado de salud y la exposición al factor. Se obtiene una "foto" de la población en un momento dado. Trabajan con <strong>casos prevalentes</strong>.</p>
+  </div>
+
+  <div class="card">
+    <h2>Medida de frecuencia: Prevalencia</h2>
+    <div class="formula-box">
+      <strong>Fórmula</strong>
+      Prevalencia = (Nº de animales enfermos / Total de la población) × 100
+    </div>
+    <div class="formula-result">💡 Ejemplo: 50 vacas enfermas en una granja de 200 → Prevalencia = 50/200 × 100 = <strong>25%</strong></div>
+  </div>
+
+  <div class="card">
+    <h2>Medidas de asociación</h2>
+    <h3>1. Odds Ratio (OR) — de enfermedad</h3>
+    <div class="formula-box">
+      <strong>Odds de enfermar en expuestos = a/b</strong>
+      Odds de enfermar en no expuestos = c/d<br><br>
+      OR = (a/b) / (c/d) = <strong>(a × d) / (b × c)</strong>
+    </div>
+    <h3 style="margin-top:16px;">2. Razón de prevalencia</h3>
+    <div class="formula-box">
+      <strong>Fórmula</strong>
+      Razón de prevalencia = Prevalencia expuestos / Prevalencia no expuestos<br>
+      = [a/(a+b)] / [c/(c+d)]
+    </div>
+    <div style="margin-top:16px;">
+      <h3>¿Cómo interpreto el OR?</h3>
+      <div class="or-scale">
+        <div class="or-seg protect">OR &lt; 1<br>Factor protector</div>
+        <div class="or-seg neutral">OR = 1<br>Sin asociación</div>
+        <div class="or-seg risk">OR &gt; 1<br>Factor de riesgo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Medidas de impacto</h2>
+    <div style="background:#fee2e2;border-radius:8px;padding:16px;text-align:center;color:#991b1b;font-weight:500;">
+      ❌ Los estudios transversales NO tienen medidas de impacto, porque no establecen relación temporal causa-efecto (no miden asociación en el tiempo).
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Ventajas y desventajas</h2>
+    <div class="pros-cons">
+      <div class="pros">
+        <h4>✅ Ventajas</h4>
+        <ul>
+          <li>Rápidos y económicos</li>
+          <li>Buenos para enfermedades crónicas</li>
+          <li>Permiten calcular la prevalencia</li>
+          <li>Evalúan varios efectos a la vez</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>❌ Desventajas</h4>
+        <ul>
+          <li>No establecen relación causa-efecto</li>
+          <li>No sirven para enfermedades raras</li>
+          <li>Mayor sesgo de selección</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===================== COHORTES ===================== -->
+<section id="cohortes">
+<div class="container">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <span style="font-size:36px;">🎬</span>
+      <div><span class="badge badge-green">Estudio tipo 2</span><h2 style="margin:4px 0 0;">Estudios de Cohortes</h2></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-box past">Población sana</div>
+      <div class="tl-arrow">→</div>
+      <div class="tl-box exposed">Expuestos /<br>No expuestos</div>
+      <div class="tl-arrow">→</div>
+      <div class="tl-box" style="background:#6b7280;">Seguimiento<br>en el tiempo</div>
+      <div class="tl-arrow">→</div>
+      <div class="tl-box outcome">Nuevos casos<br>(incidencia)</div>
+    </div>
+    <p>Se parten de individuos <strong>sanos</strong>, se clasifican según exposición al factor de riesgo, y se sigue a ambos grupos a lo largo del tiempo. Trabajan con <strong>casos incidentes (nuevos)</strong>.</p>
+  </div>
+
+  <div class="card">
+    <h2>Medidas de frecuencia: Incidencia</h2>
+    <div class="formula-box">
+      <strong>Incidencia Acumulada (IA)</strong>
+      IA = Nº casos nuevos en Δt / Nº animales susceptibles al inicio (t₀)
+    </div>
+    <div class="formula-box">
+      <strong>Tasa de Incidencia (TI) — cuando hay entradas/salidas durante el seguimiento</strong>
+      TI = Nº casos nuevos / Nº animales × tiempo en riesgo
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Medidas de asociación</h2>
+    <h3>1. Riesgo Relativo (RR)</h3>
+    <div class="formula-box">
+      <strong>Fórmula principal de los estudios de cohortes</strong>
+      RR = IA expuestos / IA no expuestos = [a/(a+b)] / [c/(c+d)]
+    </div>
+    <div class="formula-result">💡 RR = 1,93 → El riesgo de enfermar en expuestos es 1,93 veces mayor que en no expuestos</div>
+    <h3 style="margin-top:16px;">2. Razón de tasas</h3>
+    <div class="formula-box">
+      <strong>Cuando se usa tasa de incidencia</strong>
+      Razón de tasas = TI expuestos / TI no expuestos
+    </div>
+    <h3 style="margin-top:16px;">3. Odds Ratio (OR) — también aplicable</h3>
+    <div class="formula-box">
+      OR = (a × d) / (b × c)
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Medidas de impacto</h2>
+    <h3>Riesgo Atribuible (RA)</h3>
+    <p>Diferencia de riesgos: cuánta enfermedad extra tiene el grupo expuesto <em>por culpa de</em> la exposición.</p>
+    <div class="formula-box">
+      RA = Riesgo Exp − Riesgo No Exp = IA<sub>exp</sub> − IA<sub>no exp</sub>
+    </div>
+    <div class="formula-result">💡 RA = 0,112 − 0,058 = 0,054 → Un 5,4% de los casos en expuestos se deben a la exposición</div>
+
+    <h3 style="margin-top:20px;">Fracción Atribuible (FA) — Fracción etiológica</h3>
+    <p>Proporción de casos que se podrían <strong>evitar</strong> si se eliminase el factor de riesgo.</p>
+    <div class="formula-box">
+      FA = (Riesgo Exp − Riesgo No Exp) / Riesgo Exp<br><br>
+      También: FA = (RR − 1) / RR
+    </div>
+    <div class="formula-result">💡 FA = (1,93 − 1) / 1,93 = 0,482 → El 48,2% de las diarreas se habrían evitado eliminando la exposición</div>
+  </div>
+
+  <div class="card">
+    <h2>Ventajas y desventajas</h2>
+    <div class="pros-cons">
+      <div class="pros">
+        <h4>✅ Ventajas</h4>
+        <ul>
+          <li>Óptimos para exposiciones raras</li>
+          <li>Secuencia temporal clara (causalidad)</li>
+          <li>Miden la incidencia</li>
+          <li>Minimizan sesgo en la exposición</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>❌ Desventajas</h4>
+        <ul>
+          <li>Requieren mucho tiempo y dinero</li>
+          <li>Pérdidas durante el seguimiento</li>
+          <li>Para enfermedades raras necesitan muestras muy grandes</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===================== CASOS Y CONTROLES ===================== -->
+<section id="casos">
+<div class="container">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <span style="font-size:36px;">🔍</span>
+      <div><span class="badge badge-purple">Estudio tipo 3</span><h2 style="margin:4px 0 0;">Estudios de Casos y Controles</h2></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-box" style="background:#7c3aed;">Pasado<br>(¿hubo exposición?)</div>
+      <div class="tl-arrow">←</div>
+      <div class="tl-box" style="background:#dc2626;">Casos (enfermos)</div>
+    </div>
+    <div class="timeline" style="margin-top:8px;">
+      <div class="tl-box" style="background:#7c3aed;">Pasado<br>(¿hubo exposición?)</div>
+      <div class="tl-arrow">←</div>
+      <div class="tl-box" style="background:#16a34a;">Controles (sanos)</div>
+    </div>
+    <p style="margin-top:14px;">Se seleccionan enfermos (casos) y sanos (controles), y se mira <strong>hacia atrás</strong> para ver si estuvieron expuestos. Es un diseño <strong>retrospectivo</strong>. Ratio casos:controles = 1:1 hasta 1:4.</p>
+    <div style="background:#fefce8;border-radius:8px;padding:12px;margin-top:12px;color:#78350f;font-size:13px;">⚠️ Como se parte de una población ya enferma o sana, <strong>no hay medidas de frecuencia</strong> de la enfermedad (no se puede calcular prevalencia ni incidencia).</div>
+  </div>
+
+  <div class="card">
+    <h2>Medida de asociación: Odds Ratio de exposición</h2>
+    <p style="margin-bottom:12px;">En casos y controles la tabla tiene un significado diferente: las columnas son <strong>casos/controles</strong>, no enfermos/sanos.</p>
+    <div style="overflow-x:auto; text-align:center;">
+      <table class="two-by-two">
+        <tr><th></th><th>Casos</th><th>Controles</th></tr>
+        <tr><th>Expuestos</th><td class="cell-a">a</td><td class="cell-b">b</td></tr>
+        <tr><th>No expuestos</th><td class="cell-c">c</td><td class="cell-d">d</td></tr>
+      </table>
+    </div>
+    <div class="formula-box" style="margin-top:16px;">
+      <strong>Odds de exposición en los casos = a/c</strong>
+      Odds de exposición en los controles = b/d<br><br>
+      OR<sub>exposición</sub> = (a/c) / (b/d) = <strong>(a × d) / (b × c)</strong><br><br>
+      <em>¡La fórmula es matemáticamente idéntica al OR de enfermedad!</em>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Medidas de impacto</h2>
+    <h3>Fracción Atribuible en los expuestos (FAE)</h3>
+    <div class="formula-box">
+      FAE = (OR − 1) / OR
+    </div>
+    <h3 style="margin-top:16px;">FAE Poblacional</h3>
+    <p>Fracción de casos en toda la población atribuible a la exposición:</p>
+    <div class="formula-box">
+      FAE<sub>poblacional</sub> = FAE × (Casos expuestos / Casos totales)
+    </div>
+    <div class="formula-result">💡 Ejemplo perros: OR=3,27 → FAE=(3,27−1)/3,27=69,4% → FAE<sub>pobl</sub>=0,694×(33/154)=14,9%</div>
+    <div style="background:#fee2e2;border-radius:8px;padding:12px;margin-top:12px;color:#991b1b;font-size:13px;">❌ No se puede calcular el <strong>Riesgo Atribuible</strong> porque no conocemos la frecuencia real de la enfermedad en la población.</div>
+  </div>
+
+  <div class="card">
+    <h2>Ventajas y desventajas</h2>
+    <div class="pros-cons">
+      <div class="pros">
+        <h4>✅ Ventajas</h4>
+        <ul>
+          <li>Relativamente baratos</li>
+          <li>Buenos para enfermedades raras</li>
+          <li>Muy útiles en investigaciones iniciales</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>❌ Desventajas</h4>
+        <ul>
+          <li>No sirven para exposiciones raras</li>
+          <li>Sin temporalidad (retrospectivos)</li>
+          <li>Dependen de la calidad de datos pasados</li>
+          <li>Selección de controles muy delicada</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===================== RESUMEN ===================== -->
+<section id="resumen">
+<div class="container">
+  <div class="card">
+    <h2>Tabla resumen — medidas por tipo de estudio</h2>
+    <div style="overflow-x:auto;">
+      <table class="study-table">
+        <tr>
+          <th>Tipo de estudio</th>
+          <th>Frecuencia</th>
+          <th>Asociación</th>
+          <th>Impacto</th>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">📷 Transversal</span></td>
+          <td>Prevalencia</td>
+          <td>• Razón de prevalencia<br>• Odds Ratio (enfermedad)</td>
+          <td style="color:#9f1239;">❌ Sin medidas de impacto</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">🎬 Cohortes</span></td>
+          <td>• Incidencia Acumulada (IA)<br>• Tasa de Incidencia (TI)</td>
+          <td>• Riesgo Relativo (RR)<br>• Razón de tasas<br>• Odds Ratio (enfermedad)</td>
+          <td>• Riesgo Atribuible (RA)<br>• Fracción Atribuible (FA)</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-purple">🔍 Casos y Controles</span></td>
+          <td style="color:#9f1239;">❌ Sin medidas de frecuencia</td>
+          <td>• Odds Ratio (exposición)</td>
+          <td>• Fracción Atribuible (FAE)<br>• FAE Poblacional</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Comparativa rápida</h2>
+    <div style="overflow-x:auto;">
+      <table class="study-table">
+        <tr><th>Criterio</th><th>Transversal</th><th>Cohortes</th><th>Casos y Controles</th></tr>
+        <tr><td>Temporalidad</td><td>Simultánea</td><td>Prospectiva</td><td>Retrospectiva</td></tr>
+        <tr><td>Parte de</td><td>Toda la población</td><td>Individuos sanos</td><td>Enfermos + sanos</td></tr>
+        <tr><td>Coste</td><td>Bajo</td><td>Alto</td><td>Moderado</td></tr>
+        <tr><td>Enf. raras</td><td>No</td><td>No (necesita n muy grande)</td><td>Sí ✅</td></tr>
+        <tr><td>Exp. raras</td><td>Mal</td><td>Sí ✅</td><td>No</td></tr>
+        <tr><td>Causalidad</td><td>No</td><td>Sí (mejor)</td><td>Limitada</td></tr>
+        <tr><td>Medida estrella</td><td>Prevalencia / Razón prev.</td><td>RR / RA / FA</td><td>OR / FAE</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Interpretación de las medidas de asociación</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;">
+      <div style="padding:16px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;">
+        <div style="font-size:28px;font-weight:700;color:#1d3557;margin-bottom:4px;">OR / RR = 1</div>
+        <p style="font-size:13px;color:#374151;">Sin asociación. El riesgo es igual en expuestos y no expuestos.</p>
+      </div>
+      <div style="padding:16px;background:#fff1f2;border-radius:10px;border:1px solid #fda4af;">
+        <div style="font-size:28px;font-weight:700;color:#9f1239;margin-bottom:4px;">OR / RR &gt; 1</div>
+        <p style="font-size:13px;color:#374151;">Factor de riesgo. A mayor valor, mayor riesgo en expuestos.</p>
+      </div>
+      <div style="padding:16px;background:#f0fdf4;border-radius:10px;border:1px solid #86efac;">
+        <div style="font-size:28px;font-weight:700;color:#166534;margin-bottom:4px;">OR / RR &lt; 1</div>
+        <p style="font-size:13px;color:#374151;">Factor protector. La exposición reduce el riesgo de enfermar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===================== CALCULADORA ===================== -->
+<section id="calculadora">
+<div class="container">
+  <div class="card">
+    <h2>🔢 Calculadora de medidas epidemiológicas</h2>
+    <p style="margin-bottom:16px;">Introduce los valores de la tabla 2×2 y elige el tipo de estudio:</p>
+
+    <div style="overflow-x:auto;text-align:center;margin-bottom:20px;">
+      <table class="two-by-two">
+        <tr><th></th><th id="col1-header">Enfermos</th><th id="col2-header">No enfermos</th></tr>
+        <tr><th>Expuestos</th><td class="cell-a"><input type="number" id="val-a" value="100" style="width:60px;border:none;background:transparent;font-size:18px;font-weight:700;color:#1e40af;text-align:center;" oninput="calcUpdate()"></td><td class="cell-b"><input type="number" id="val-b" value="110" style="width:60px;border:none;background:transparent;font-size:18px;font-weight:700;color:#0369a1;text-align:center;" oninput="calcUpdate()"></td></tr>
+        <tr><th>No expuestos</th><td class="cell-c"><input type="number" id="val-c" value="28" style="width:60px;border:none;background:transparent;font-size:18px;font-weight:700;color:#166534;text-align:center;" oninput="calcUpdate()"></td><td class="cell-d"><input type="number" id="val-d" value="189" style="width:60px;border:none;background:transparent;font-size:18px;font-weight:700;color:#15803d;text-align:center;" oninput="calcUpdate()"></td></tr>
+      </table>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label style="font-size:14px;font-weight:500;color:#374151;margin-right:12px;">Tipo de estudio:</label>
+      <select id="study-type" onchange="calcUpdate()" style="padding:8px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;">
+        <option value="transversal">Transversal</option>
+        <option value="cohortes">Cohortes (Incidencia Acumulada)</option>
+        <option value="casos">Casos y Controles</option>
+      </select>
+    </div>
+
+    <div class="calc-results" id="calc-results">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===================== QUIZ ===================== -->
+<section id="quiz">
+<div class="container">
+  <div class="card">
+    <h2>🧠 Pon a prueba tus conocimientos</h2>
+    <p style="margin-bottom:24px;">Selecciona la respuesta correcta en cada pregunta. Al terminar, verás tu puntuación.</p>
+
+    <div id="quiz-container"></div>
+
+    <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;">
+      <button class="calc-btn" onclick="checkQuiz()">Corregir quiz</button>
+      <button class="calc-btn" style="background:#6b7280;" onclick="resetQuiz()">Reiniciar</button>
+    </div>
+    <div class="quiz-score" id="quiz-score"></div>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <h2>✏️ Completa las fórmulas</h2>
+    <p style="margin-bottom:16px;">Escribe el término correcto en cada hueco y pulsa Verificar:</p>
+    <div id="fitb-container"></div>
+    <button class="calc-btn" style="margin-top:12px;" onclick="checkFITB()">Verificar respuestas</button>
+  </div>
+</div>
+</section>
+
+<!-- ===================== RECURSOS ===================== -->
+<section id="recursos">
+<div class="container">
+  <div class="card">
+    <h2>🔗 Recursos online para cálculos epidemiológicos</h2>
+    <p style="margin-bottom:20px;">Herramientas gratuitas recomendadas para calcular medidas de asociación e impacto:</p>
+
+    <a class="resource-card" href="https://www.openepi.com/TwobyTwo/TwobyTwo.htm" target="_blank">
+      <div class="resource-icon" style="background:#dbeafe;">📊</div>
+      <div>
+        <h4>OpenEpi — Tabla 2×2</h4>
+        <p>Calcula OR, RR, Chi-cuadrado, IC95% directamente. Ideal para estudios transversales, cohortes y casos-controles.</p>
+        <div><span class="badge badge-blue tag">Gratuito</span> <span class="badge badge-blue tag">Online</span></div>
+      </div>
+    </a>
+
+    <a class="resource-card" href="http://www.winepi.net/" target="_blank">
+      <div class="resource-icon" style="background:#dcfce7;">🐄</div>
+      <div>
+        <h4>WinEpi</h4>
+        <p>Calculadora epidemiológica veterinaria. Prevalencia, incidencia, tamaño muestral, OR, RR y mucho más. Desarrollada por la Universidad de Zaragoza.</p>
+        <div><span class="badge badge-green tag">Veterinaria</span> <span class="badge badge-green tag">Español</span></div>
+      </div>
+    </a>
+
+    <a class="resource-card" href="https://epitools.ausvet.com.au/" target="_blank">
+      <div class="resource-icon" style="background:#fdf4ff;">🔬</div>
+      <div>
+        <h4>EpiTools (AusVet)</h4>
+        <p>Herramienta epidemiológica completa. Tamaño muestral, pruebas diagnósticas, análisis de datos. Muy usada en epidemiología veterinaria.</p>
+        <div><span class="badge badge-purple tag">Veterinaria</span> <span class="badge badge-purple tag">Inglés</span></div>
+      </div>
+    </a>
+
+    <a class="resource-card" href="https://www.cdc.gov/epiinfo/index.html" target="_blank">
+      <div class="resource-icon" style="background:#ffedd5;">🏥</div>
+      <div>
+        <h4>Epi Info™ (CDC)</h4>
+        <p>Software del CDC para análisis epidemiológico. Encuestas, bases de datos, análisis estadístico y mapas. Referencia mundial.</p>
+        <div><span class="badge badge-orange tag">Descargable</span> <span class="badge badge-orange tag">Avanzado</span></div>
+      </div>
+    </a>
+
+    <a class="resource-card" href="https://www.statcalc.info/" target="_blank">
+      <div class="resource-icon" style="background:#fee2e2;">📐</div>
+      <div>
+        <h4>StatCalc / MedCalc</h4>
+        <p>Calculadoras estadísticas online para OR, RR, NNT, sensibilidad/especificidad e intervalos de confianza.</p>
+        <div><span class="badge badge-red tag">Estadística</span> <span class="badge badge-red tag">Online</span></div>
+      </div>
+    </a>
+
+    <a class="resource-card" href="https://www.r-project.org/" target="_blank">
+      <div class="resource-icon" style="background:#dbeafe;">💻</div>
+      <div>
+        <h4>R + epiR / epitools</h4>
+        <p>Para análisis avanzado: paquetes epiR y epitools permiten calcular todas las medidas epidemiológicas con IC95% y reproducibilidad total.</p>
+        <div><span class="badge badge-blue tag">Gratis</span> <span class="badge badge-blue tag">Avanzado</span></div>
+      </div>
+    </a>
+  </div>
+
+  <div class="card">
+    <h2>📚 Fórmulas de referencia rápida</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;">
+      <div>
+        <h3 style="margin-bottom:8px;">Transversal</h3>
+        <div class="formula-box" style="font-size:13px;">Prevalencia = (Enf / Total) × 100<br>Razón prev = P(exp) / P(no exp)<br>OR = (a×d) / (b×c)</div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:8px;">Cohortes</h3>
+        <div class="formula-box" style="font-size:13px;">IA = casos nuevos / susceptibles t₀<br>RR = IA(exp) / IA(no exp)<br>RA = IA(exp) − IA(no exp)<br>FA = RA / IA(exp) = (RR−1)/RR</div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:8px;">Casos y Controles</h3>
+        <div class="formula-box" style="font-size:13px;">OR = (a×d) / (b×c)<br>FAE = (OR−1) / OR<br>FAE<sub>pobl</sub> = FAE × (casos exp / total casos)</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<script>
+// ---- NAV ----
+function showSection(id, el) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ---- CALCULATOR ----
+function calcUpdate() {
+  const a = parseFloat(document.getElementById('val-a').value) || 0;
+  const b = parseFloat(document.getElementById('val-b').value) || 0;
+  const c = parseFloat(document.getElementById('val-c').value) || 0;
+  const d = parseFloat(document.getElementById('val-d').value) || 0;
+  const type = document.getElementById('study-type').value;
+  const col1 = document.getElementById('col1-header');
+  const col2 = document.getElementById('col2-header');
+
+  if (type === 'casos') {
+    col1.textContent = 'Casos'; col2.textContent = 'Controles';
+  } else {
+    col1.textContent = 'Enfermos'; col2.textContent = 'No enfermos';
+  }
+
+  const OR = (b*c > 0) ? (a*d)/(b*c) : null;
+  let html = '';
+
+  if (type === 'transversal') {
+    const totalExp = a + b;
+    const totalNoExp = c + d;
+    const total = a + b + c + d;
+    const prevExp = totalExp > 0 ? a / totalExp : null;
+    const prevNoExp = totalNoExp > 0 ? c / totalNoExp : null;
+    const prev = total > 0 ? (a + c) / total : null;
+    const rp = (prevExp && prevNoExp && prevNoExp > 0) ? prevExp / prevNoExp : null;
+
+    html += row('Prevalencia total', prev !== null ? (prev*100).toFixed(2) + '%' : '—');
+    html += row('Prevalencia expuestos', prevExp !== null ? (prevExp*100).toFixed(2) + '%' : '—');
+    html += row('Prevalencia no expuestos', prevNoExp !== null ? (prevNoExp*100).toFixed(2) + '%' : '—');
+    html += row('Razón de prevalencia', rp !== null ? rp.toFixed(3) : '—');
+    html += row('Odds Ratio (OR)', OR !== null ? OR.toFixed(3) : '—');
+    html += interp(OR, 'OR');
+
+  } else if (type === 'cohortes') {
+    const iaExp = (a+b) > 0 ? a/(a+b) : null;
+    const iaNoExp = (c+d) > 0 ? c/(c+d) : null;
+    const RR = (iaExp && iaNoExp && iaNoExp > 0) ? iaExp / iaNoExp : null;
+    const RA = (iaExp !== null && iaNoExp !== null) ? iaExp - iaNoExp : null;
+    const FA = (RA !== null && iaExp > 0) ? RA / iaExp : null;
+
+    html += row('IA expuestos', iaExp !== null ? (iaExp*100).toFixed(2) + '%' : '—');
+    html += row('IA no expuestos', iaNoExp !== null ? (iaNoExp*100).toFixed(2) + '%' : '—');
+    html += row('Riesgo Relativo (RR)', RR !== null ? RR.toFixed(3) : '—');
+    html += row('Odds Ratio (OR)', OR !== null ? OR.toFixed(3) : '—');
+    html += row('Riesgo Atribuible (RA)', RA !== null ? (RA*100).toFixed(2) + '%' : '—');
+    html += row('Fracción Atribuible (FA)', FA !== null ? (FA*100).toFixed(1) + '%' : '—');
+    html += interp(RR, 'RR');
+
+  } else {
+    const FAE = OR !== null && OR > 0 ? (OR - 1) / OR : null;
+    const totalCasos = a + c;
+    const FAEpobl = FAE !== null && totalCasos > 0 ? FAE * (a / totalCasos) : null;
+
+    html += row('Odds Ratio de exposición (OR)', OR !== null ? OR.toFixed(3) : '—');
+    html += row('FAE (en expuestos)', FAE !== null ? (FAE*100).toFixed(1) + '%' : '—');
+    html += row('FAE Poblacional', FAEpobl !== null ? (FAEpobl*100).toFixed(1) + '%' : '—');
+    html += interp(OR, 'OR');
+  }
+
+  document.getElementById('calc-results').innerHTML = html;
+}
+
+function row(label, val) {
+  return `<div class="result-row"><span>${label}</span><span class="result-value">${val}</span></div>`;
+}
+function interp(val, type) {
+  if (val === null) return '';
+  let txt = '';
+  if (val > 1) txt = `<strong>${type} = ${val.toFixed(2)}</strong> → Factor de riesgo. Los expuestos tienen ${val.toFixed(2)}x más probabilidad de enfermar.`;
+  else if (val < 1) txt = `<strong>${type} = ${val.toFixed(2)}</strong> → Factor protector. La exposición reduce el riesgo.`;
+  else txt = `<strong>${type} = 1</strong> → Sin asociación.`;
+  return `<div class="interp">💡 ${txt}</div>`;
+}
+
+calcUpdate();
+
+// ---- QUIZ ----
+const quizData = [
+  { q: "¿Qué medida de frecuencia se usa en los estudios transversales?", opts: ["Incidencia acumulada", "Prevalencia", "Tasa de incidencia", "Riesgo relativo"], correct: 1, exp: "Los transversales miden cuántos casos hay en un momento dado: eso es la PREVALENCIA." },
+  { q: "En un estudio de cohortes, el Riesgo Relativo (RR) = 2,5. ¿Qué significa?", opts: ["Los expuestos tienen un 2,5% más de riesgo", "Los expuestos tienen 2,5 veces más riesgo de enfermar", "No hay asociación", "Es un factor protector"], correct: 1, exp: "RR > 1 indica factor de riesgo. RR=2,5 → los expuestos tienen 2,5 veces más riesgo que los no expuestos." },
+  { q: "¿Por qué los estudios de casos y controles NO pueden calcular la incidencia?", opts: ["Porque son muy caros", "Porque parten de una población ya enferma y sana, no de una población en riesgo", "Porque son prospectivos", "Porque no tienen grupo control"], correct: 1, exp: "Al seleccionar casos y controles por criterio de enfermedad, no tenemos una cohorte inicial en riesgo con la que calcular incidencia." },
+  { q: "La Fracción Atribuible (FA) = 48%. ¿Qué indica?", opts: ["El 48% de los animales están enfermos", "El 48% de los casos en expuestos se deben a la exposición y podrían evitarse", "El OR es 0,48", "Los expuestos tienen 48% menos riesgo"], correct: 1, exp: "La FA indica qué proporción de los casos en el grupo expuesto son atribuibles al factor de riesgo y se eliminarían si se quitara la exposición." },
+  { q: "¿Qué tipo de estudio es más adecuado para investigar una enfermedad rara con causa conocida?", opts: ["Transversal", "Casos y controles", "Cohortes", "Ninguno de los anteriores"], correct: 1, exp: "Para enfermedades raras, los casos y controles son los más eficientes: se buscan directamente los casos de esa enfermedad sin necesitar seguir una cohorte enorme. Los cohortes son óptimos para exposiciones raras." },
+  { q: "La fórmula del Odds Ratio en todos los tipos de estudio es:", opts: ["(a+d) / (b+c)", "(a×d) / (b×c)", "a/(a+b) / c/(c+d)", "(a-c) / (b-d)"], correct: 1, exp: "El OR siempre se calcula como el producto cruzado: (a×d)/(b×c), independientemente del tipo de estudio." },
+  { q: "En estudios de cohortes, si IA(exp)=0,15 e IA(no exp)=0,05, ¿cuál es el Riesgo Atribuible?", opts: ["3", "0,10 (10%)", "0,75", "0,05"], correct: 1, exp: "RA = IA(exp) − IA(no exp) = 0,15 − 0,05 = 0,10 = 10%. Esa diferencia de riesgo es atribuible a la exposición." },
+  { q: "¿Cuál es la principal ventaja de los estudios transversales frente a los de cohortes?", opts: ["Establecen causalidad mejor", "Son más rápidos y económicos", "Pueden estudiar enfermedades raras", "Miden incidencia"], correct: 1, exp: "Los transversales son más rápidos, baratos y permiten estudiar varios factores a la vez, aunque no establecen causalidad." },
+];
+
+let quizAnswers = {};
+
+function buildQuiz() {
+  const c = document.getElementById('quiz-container');
+  c.innerHTML = quizData.map((q, qi) => `
+    <div class="quiz-question">
+      <p>${qi+1}. ${q.q}</p>
+      ${q.opts.map((o, oi) => `
+        <label class="quiz-option" id="opt-${qi}-${oi}" onclick="selectOpt(${qi}, ${oi})">
+          <span style="font-weight:600;margin-right:8px;">${String.fromCharCode(65+oi)}.</span> ${o}
+        </label>
+      `).join('')}
+      <div id="fb-${qi}" class="quiz-feedback" style="display:none;"></div>
+    </div>
+  `).join('');
+}
+
+function selectOpt(qi, oi) {
+  if (document.getElementById(`opt-${qi}-0`).classList.contains('revealed')) return;
+  quizAnswers[qi] = oi;
+  document.querySelectorAll(`[id^="opt-${qi}-"]`).forEach(el => el.style.borderColor = '#d1d5db');
+  document.getElementById(`opt-${qi}-${oi}`).style.borderColor = '#3b82f6';
+  document.getElementById(`opt-${qi}-${oi}`).style.background = '#eff6ff';
+}
+
+function checkQuiz() {
+  let score = 0;
+  quizData.forEach((q, qi) => {
+    const chosen = quizAnswers[qi];
+    const opts = document.querySelectorAll(`[id^="opt-${qi}-"]`);
+    opts.forEach(el => { el.classList.add('revealed'); });
+    if (chosen !== undefined) {
+      if (chosen === q.correct) {
+        document.getElementById(`opt-${qi}-${chosen}`).classList.add('correct');
+        score++;
+      } else {
+        document.getElementById(`opt-${qi}-${chosen}`).classList.add('incorrect');
+        document.getElementById(`opt-${qi}-${q.correct}`).classList.add('correct');
+      }
+    } else {
+      document.getElementById(`opt-${qi}-${q.correct}`).classList.add('correct');
+    }
+    const fb = document.getElementById(`fb-${qi}`);
+    fb.style.display = 'block';
+    fb.className = 'quiz-feedback ' + (chosen === q.correct ? 'ok' : 'fail');
+    fb.textContent = (chosen === q.correct ? '✅ ' : '❌ ') + q.exp;
+  });
+  const sc = document.getElementById('quiz-score');
+  sc.style.display = 'block';
+  const pct = Math.round(score/quizData.length*100);
+  sc.innerHTML = `Resultado: ${score} / ${quizData.length} (${pct}%)<br><span style="font-size:16px;font-weight:400;color:#374151;">${pct>=80?'¡Excelente trabajo! 🎉':pct>=60?'Bien, repasa los conceptos que fallaste 📖':'Sigue estudiando, ¡tú puedes! 💪'}</span>`;
+}
+
+function resetQuiz() {
+  quizAnswers = {};
+  buildQuiz();
+  document.getElementById('quiz-score').style.display = 'none';
+}
+
+buildQuiz();
+
+// ---- FILL IN THE BLANK ----
+const fitbData = [
+  { before: "En estudios transversales, la medida de frecuencia es la", answer: "prevalencia", after: "." },
+  { before: "En estudios de cohortes, el Riesgo Relativo (RR) = IA(exp) / IA(no exp). Si IA(exp)=0,20 e IA(no exp)=0,10, entonces RR =", answer: "2", after: "." },
+  { before: "La Fracción Atribuible puede calcularse como (RR − 1) /", answer: "RR", after: "." },
+  { before: "En casos y controles, la medida de asociación es el", answer: "OR", after: "(Odds Ratio de exposición)." },
+  { before: "Si OR = 4 en un estudio de casos y controles, la FAE =", answer: "75", after: "% (es decir (4-1)/4 × 100)." },
+  { before: "Los estudios transversales NO tienen medidas de", answer: "impacto", after: "." },
+];
+
+function buildFITB() {
+  const c = document.getElementById('fitb-container');
+  c.innerHTML = fitbData.map((f, i) => `
+    <div class="fitb-sentence">
+      ${f.before} <input class="fitb-input" id="fitb-${i}" placeholder="..."> ${f.after}
+    </div>
+  `).join('');
+}
+
+function checkFITB() {
+  fitbData.forEach((f, i) => {
+    const inp = document.getElementById(`fitb-${i}`);
+    const val = inp.value.trim().toLowerCase().replace(/[.,]/g,'');
+    const ans = f.answer.toLowerCase();
+    inp.classList.remove('correct','wrong');
+    inp.classList.add(val === ans ? 'correct' : 'wrong');
+  });
+}
+
+buildFITB();
+</script>
+</body>
+</html>
